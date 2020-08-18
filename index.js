@@ -1,37 +1,30 @@
 var api = require('mikronode');
 
 var device=new api(/* Host */'138.118.87.76' , '1420'/*, Timeout */);
-// device.setDebug(api.DEBUG);
+let datas = [];
+let json = {};
 
 // connect: user, password.
 device.connect()
-.then(([login])=>login('n0c1nb','30MkNkvAwqfe'))
+.then(([login])=>login('n0c1nb',''))
 .then(function(conn) {
     var c1=conn.openChannel();
-    var c2=conn.openChannel();
     c1.closeOnDone(true);
-    c2.closeOnDone(true);
 
-    console.log('Getting Interfaces');
-    c1.write('/interface/ethernet/print');
-    console.log('Getting routes');
-    c2.write('/ip/route/print');
+
+    console.log('Getting IP Adresses');
+    c1.write('/ip/address/print');
+
 
     c1.data // get only data here
       .subscribe(function(data) { // feeds in one result line at a time.
-          console.log('Interfaces:');
-          console.log(JSON.stringify(data.data,true,2));
+        console.log(api.resultsToObj(data))
        })
 
-    // In this one, we wait for the data to be done before running handler.
-    c2.done // return here only when all data is received.
-      .subscribe(function(data){ // feeds in all results at once.
-        console.log('Routes:');
-        // data.forEach(function(i){console.log(JSON.stringify(i,4,true))});
-        //console.log(JSON.stringify(data.data,true,2));
-      });
-
 })
+
 .catch(function(err) {
  // console.log("Error during processing:",err);
-});
+})
+
+
