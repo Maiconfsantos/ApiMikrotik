@@ -1,0 +1,28 @@
+{
+  "name": "apimikrotik",
+  "version": "1.0.0",
+  "description": "INB API Mikrotik",
+  "main": "index.js",
+  "scripts": {
+    "test": "teste"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Maiconfsantos/ApiMikrotik.git"
+  },
+  "keywords": [
+    "mikrotik"
+  ],
+  "author": "Maicon Flor dos Santos",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Maiconfsantos/ApiMikrotik/issues"
+  },
+  "homepage": "https://github.com/Maiconfsantos/ApiMikrotik#readme",
+  "dependencies": {
+    "core-decorators": "^0.20.0",
+    "express": "^4.17.1",
+    "mikronode": "^2.3.11",
+    "rxjs": "^5.3.3"
+  }
+}
