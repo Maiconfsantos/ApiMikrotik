@@ -5,17 +5,25 @@ const port = 3000
 const api = require('mikronode');
 let passwords = require('./config/password')
 
+let info = [];
+
 app.get('/', async  (req, res) => {
    var device=new api(/* Host */'138.118.87.76' , '1420'/*, Timeout */);
+   await connect(device);
+   console.log('1');
 
-   var data = await connect(device,res);
+   var device=new api(/* Host */'138.118.87.76' , '1420'/*, Timeout */);
+   await connect(device);
+   console.log('2');
 
-   res.json(data); //here I don't have data
+
+   console.log('3')
+   res.json(info[0]); //here I don't have data
 
    
 })
 
-async function connect(device,res){
+async function connect(device){
 
    await device.connect()
    .then(([login])=>{
@@ -31,8 +39,8 @@ async function connect(device,res){
          chan.on('done',function(data) {
             chan.close();
             conn.close();
-            console.log('1')
-            //res.json(data.data)  //if I return here, it's all right
+            info =[...info,data.data]
+            console.log('data');
             resolve(data.data)            
          }); 
       }) 
