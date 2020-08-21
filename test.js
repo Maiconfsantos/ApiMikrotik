@@ -1,9 +1,18 @@
-const greetingPoster = new Promise((resolve, reject) => {
-    resolve('Welcome! Nice to meet you.');
+// Example function that returns a Promise that will resolve after 2 seconds
+var getGenres = function() {
+  return new Promise(function(resolve) {
+    setTimeout(function(){
+      resolve(['comedy', 'drama', 'action'])
+    }, 2000);
   });
-  
-  console.log('Before calling then on Promise');
-  
-  greetingPoster.then(res => console.log(`Greeting from promise: ${res}`));
-  
-  console.log('After calling then on Promise (proof of being always async)');
+}
+
+main()
+
+// We start an 'async' function to use the 'await' keyword
+async function main(){
+  var result = await getGenres()
+  console.log('Woo done!', result)
+
+
+}

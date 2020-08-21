@@ -8,36 +8,37 @@ let passwords = require('./config/password')
 app.get('/', async  (req, res) => {
    var device=new api(/* Host */'138.118.87.76' , '1420'/*, Timeout */);
 
-   const data = await connect(device);
-   console.log('3');
-   console.log(data)
-   res.json(data)
+   var data = await connect(device,res);
 
+   res.json(data); //here I don't have data
+
+   
 })
 
-async function connect(device){
+async function connect(device,res){
+
    await device.connect()
-   .then(([login])=>login(passwords.mikrotikEquipamentUser,passwords.mikrotikEquipament))
-   .then(async function(conn) {
-      var c1=conn.openChannel();
-      c1.write('/ip/address/print');
-      console.log(1);
-
-      return new Promise((resolve, reject)=>{
-         c1.data // get only data here
-             .subscribe(function(data) { // feeds in one result line at a time.
-                console.log('2');
-                resolve(api.resultsToObj(data))
-             })
-         
-    })
-
+   .then(([login])=>{
+     return login(passwords.mikrotikEquipamentUser,passwords.mikrotikEquipament);
    })
-   .catch(function(err) {
-      console.log("Error during processing:",err);
-   });
+   .then(function(conn) {
+     
+      var chan=conn.openChannel("addresses"); // open a named channel
+      chan.write('/ip/address/print');
 
+   
+      return new Promise((resolve, reject)=>{
+         chan.on('done',function(data) {
+            chan.close();
+            conn.close();
+            console.log('1')
+            //res.json(data.data)  //if I return here, it's all right
+            resolve(data.data)            
+         }); 
+      }) 
+   })
 }
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)

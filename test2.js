@@ -1,18 +1,30 @@
 
 const { Observable } =  require('rxjs');
+ 
+const foo = new Observable(subscriber => {
+  console.log('Hello');
+  subscriber.next(42);
+  subscriber.next(100);
+  
+  setTimeout(() => {
+    subscriber.next(200); // happens asynchronously
+    subscriber.complete();
+  }, 1000);
+  subscriber.next(300);
+  
+});
 
-const tiredGreetingLady$ = new Observable(observer => {
-    setTimeout(() => {
-      observer.next('Hello! I am glad to get to know you.');
-      observer.complete();
-    }, 2000);
-  });
-  
-  console.log('Before calling subscribe on Observable');
-  
-  tiredGreetingLady$.subscribe({
-    next: console.log,
-    complete: () => console.log('End of conversation with tired preety lady')
-  });
-  
-  console.log('After calling subscribe on Observable (proof of being able to execute async)');
+
+main();
+
+async function main(){
+
+    console.log('before');
+    const promisse  = (new Promise())
+    .then(foo.subscribe(x => {
+        console.log(x);
+    }))
+
+    const promisseB = promisse.then(resolve('oi'))
+
+}
