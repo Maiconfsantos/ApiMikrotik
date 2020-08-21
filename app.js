@@ -8,17 +8,15 @@ let passwords = require('./config/password')
 let info = [];
 
 app.get('/', async  (req, res) => {
-   var device=new api(/* Host */'138.118.87.76' , '1420'/*, Timeout */);
+
+   var device=new api('138.118.87.76' , '1420', 100);
    await connect(device);
-   console.log('1');
 
-   var device=new api(/* Host */'138.118.87.76' , '1420'/*, Timeout */);
+   var device=new api('138.118.87.7645' , '1420', 100);
    await connect(device);
-   console.log('2');
 
 
-   console.log('3')
-   res.json(info[0]); //here I don't have data
+   res.json(info); 
 
    
 })
@@ -36,14 +34,16 @@ async function connect(device){
 
    
       return new Promise((resolve, reject)=>{
+         if(!chan) reject('sem conexao');
          chan.on('done',function(data) {
             chan.close();
             conn.close();
-            info =[...info,data.data]
-            console.log('data');
+            info =[...info, data.data]
             resolve(data.data)            
          }); 
       }) 
+   }, (reject) =>{
+      console.log('sem conexao')
    })
 }
 
