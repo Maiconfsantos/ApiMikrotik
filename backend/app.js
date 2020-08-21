@@ -11,31 +11,33 @@ let info = [];
 let info2 = [];
 
 app.get('/', async  (req, res) => {
-
-
+   info2 = [];
    data = getDevices();
 
    await data.then( async (data) => {
       var device;
 
-      data.forEach(async element => {
-         device=new api(element.IPv4 , '1420', 10000);
-         await connect(device);
+      let promise = new Promise ( async function (resolve, reject){
+         Promise.all(data.map(async function (element)  {
+            device=new api(element.IPv4 , '1420');
+            await connect(device);
+            info2 = [...info2,{
+               localname: element.name,
+               localIP: element.IPv4,
+               IPaddress: info
+            }];    
+         })).then(() =>{
 
-         info2 = [...info2,{
-            localname: element.name,
-            localIP: element.IPv4,
-            IPaddress: info
-         }];    
-      });
- 
+            resolve(info2); 
+         })    
+      })
+
+      promise.then( (data) =>{
+         res.json(data);
+      })
    })
-
-   res.json(info2)
-
-     
-
-     
+   
+   
 })
 
 async function getDevices(){
@@ -62,19 +64,19 @@ async function connect(device){
    
       return new Promise((resolve, reject)=>{
          if(!chan) reject('sem conexao');
-         chan.on('done',function(data) {
+         chan.on('done',async function(data) {
             chan.close();
             conn.close();
-            info =data.data
+            info = data.data
             resolve(data.data)            
          }); 
       }) 
    }, (reject) =>{
-      console.log('error:', reject)
+     // console.log('error:', reject)
    })
 }
 
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  //console.log(`Example app listening at http://localhost:${port}`)
 })
