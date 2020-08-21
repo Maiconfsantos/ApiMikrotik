@@ -4,22 +4,49 @@ const port = 3000
 
 const api = require('mikronode');
 let passwords = require('./config/password')
+let dbConn = require('./config/database/mysql')
 
 let info = [];
 
+let info2 = [];
+
 app.get('/', async  (req, res) => {
 
-   var device=new api('138.118.87.76' , '1420', 100);
-   await connect(device);
 
-   var device=new api('138.118.87.7645' , '1420', 100);
-   await connect(device);
+   data = getDevices();
 
+   await data.then( async (data) => {
+      var device;
 
-   res.json(info); 
+      data.forEach(async element => {
+         device=new api(element.IPv4 , '1420', 10000);
+         await connect(device);
 
-   
+         info2 = [...info2,{
+            localname: element.name,
+            localIP: element.IPv4,
+            IPaddress: info
+         }];    
+      });
+ 
+   })
+
+   res.json(info2)
+
+     
+
+     
 })
+
+async function getDevices(){
+   return new Promise(async function(resolve, reject){
+      await dbConn.query('select * from devices', function (err, rows) {
+         resolve(rows);
+      });
+
+   })
+   
+}
 
 async function connect(device){
 
@@ -38,12 +65,12 @@ async function connect(device){
          chan.on('done',function(data) {
             chan.close();
             conn.close();
-            info =[...info, data.data]
+            info =data.data
             resolve(data.data)            
          }); 
       }) 
    }, (reject) =>{
-      console.log('sem conexao')
+      console.log('error:', reject)
    })
 }
 
