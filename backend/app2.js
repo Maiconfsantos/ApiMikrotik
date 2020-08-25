@@ -19,8 +19,8 @@ app.get('/', async  (req, res) => {
 
       let promise = new Promise ( async function (resolve, reject){
          Promise.all(data.map(async function (element)  {
+            info=[];
             device=new api(element.IPv4 , '1420');
-            info = [];
             await connect(device);
             info2 = [...info2,{
                localname: element.name,
@@ -59,8 +59,8 @@ async function connect(device){
    })
    .then(function(conn) {
      
-      var chan=conn.openChannel("addresses"); // open a named channel
-      chan.write('/ip/address/print');
+      var chan=conn.openChannel();
+      chan.write('/interface/print');
 
    
       return new Promise((resolve, reject)=>{
@@ -68,7 +68,11 @@ async function connect(device){
          chan.on('done',async function(data) {
             chan.close();
             conn.close();
-            info = data.data
+            data.data.map((port)=>{
+                if (port[3].value == 'ether'){
+                    info=[...info, port]
+                }
+            })
             resolve(data.data)            
          }); 
       }) 
@@ -79,5 +83,5 @@ async function connect(device){
 
 
 app.listen(port, () => {
-  //console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`Example app listening at http://localhost:${port}`)
 })

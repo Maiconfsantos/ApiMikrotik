@@ -1,49 +1,48 @@
-import Head from 'next/head'
+
 import Layout, { siteTitle } from '../components/layout'
-import utilStyles from '../styles/utils.module.css'
-import { getSortedPostsData } from '../lib/posts'
-import Link from 'next/link'
-import Date from '../components/date'
 
-export default function Home({ allPostsData }) {
+const fetch = require('node-fetch');
+
+
+export default function Home({ devices }) {
   return (
-    <Layout home>
-      <Head>
-        <title>{siteTitle}</title>
-      </Head>
-      <section className={utilStyles.headingMd}>
-        <p>[Your Self Introduction]</p>
-        <p>
-          (This is a sample website - you’ll be building a site like this on{' '}
-          <a href="https://nextjs.org/learn">our Next.js tutorial</a>.)
-        </p>
-      </section>
-
-      <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
-        <h2 className={utilStyles.headingLg}>Blog</h2>
-        <ul className={utilStyles.list}>
-          {allPostsData.map(({ id, date, title }) => (
-            <li className={utilStyles.listItem} key={id}>
-              <Link href="/posts/[id]" as={`/posts/${id}`}>
-              <a>{title}</a>
-              </Link>
-              <br />
-              <small className={utilStyles.lightText}>
-              <Date dateString={date} />
-              </small>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </Layout>
+    <Layout >
+      {devices.map((device) => (
+        <table>
+          <thead>
+            <th>
+                {device.localname} / {device.localIP}  
+            </th>
+          </thead>  
+          {console.log('1')}
+          <tbody>
+            <tr>
+              <td>
+                {device.IPaddress[0][3].value}
+              </td>
+            </tr>
+            {device.IPaddress.map((port) =>{
+              <tr>
+                <td>
+                  {console.log(port[3].value), port[3].value}
+                </td>
+              </tr>
+            })}
+          </tbody>
+        </table>
+      ))}
+    </Layout >
+      
   )
 }
 
 export async function getStaticProps() {
-  const allPostsData = getSortedPostsData()
+  const res = await fetch('http://localhost:3000')
+  const devices = await res.json()
+
   return {
     props: {
-      allPostsData
+      devices
     }
   }
 }
