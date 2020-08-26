@@ -8,28 +8,42 @@ export default function Home({ devices }) {
   return (
     <Layout >
       {devices.map((device) => (
-        <table>
-          <thead>
-            <th>
-                {device.localname} / {device.localIP}  
-            </th>
-          </thead>  
-          {console.log('1')}
-          <tbody>
-            <tr>
-              <td>
-                {device.IPaddress[0][3].value}
-              </td>
-            </tr>
-            {device.IPaddress.map((port) =>{
+          <table>  
+            {console.log('1')}
+            <tbody>
+              <tr>
+                <th>
+                    {device.localname} / {device.localIP}  
+                </th>
+              </tr>
+
               <tr>
                 <td>
-                  {console.log(port[3].value), port[3].value}
+                  Interface
                 </td>
-              </tr>
-            })}
-          </tbody>
-        </table>
+                <td>
+                  Address
+                </td>
+                <td>
+                  Network
+                </td>
+              </tr>  
+              {device.IPaddress.map(port =>(
+                <tr>
+                  <td>
+                    {console.log(port), port[3].value /*interface name*/} 
+                  </td>
+                  <td>
+                    {port[1].value /*address name*/}
+                  </td>
+                  <td>
+                    {port[2].value /*network name*/}
+                  </td>
+
+                </tr>
+              ))}
+            </tbody>
+          </table>
       ))}
     </Layout >
       
